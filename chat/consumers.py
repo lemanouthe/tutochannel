@@ -1,7 +1,8 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-
-from .models import *
+from django.contrib.auth.models import User
+from channels.db import database_sync_to_async
+from . import models
 
 class ChatConsumerEditor(AsyncWebsocketConsumer):
     async def connect(self):
@@ -29,7 +30,7 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        print(message)
+        # print(message)
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -43,11 +44,20 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
-
-        # message = TestMessage(message=message)
-        # message.save()
         
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
         }))
+        await self.save_message(message)
+    
+    @database_sync_to_async
+    def save_message(self, message):
+        texte = message['mes']
+        auteur = User.objects.get(username=str(message['user']))
+
+        mess = models.Message(
+            message=texte,
+            author=auteur
+        )
+        mess.save()

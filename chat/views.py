@@ -4,11 +4,17 @@ import json
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from . import models
 
 
 # Create your views here.
+@login_required(login_url='connexion')
 def index(request):
-    return render(request, 'chat.html')
+    mess = models.Message.objects.filter(status=True)
+    data = {
+        'message': mess,
+    }
+    return render(request, 'chat.html', data)
 
 def connexion(request):
     return render(request, 'connexion.html')
