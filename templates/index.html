@@ -39,7 +39,7 @@
                 methods: {
                     connect() {
                         roomName = "salut"
-                        this.socket = new WebSocket('ws://192.168.1.124:8000/ws/chat/' + roomName + '/');
+                        this.socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/' + roomName + '/');
                         this.socket.onopen = () => {
                             this.status = "connected";
                             console.log("connecte")
