@@ -10,7 +10,7 @@ from . import models
 # Create your views here.
 @login_required(login_url='connexion')
 def index(request):
-    mess = models.Message.objects.filter(status=True)
+    mess = models.Message.objects.filter(status=True).order_by('date_add')
     data = {
         'message': mess,
     }

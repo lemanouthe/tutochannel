@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.models import User
 from channels.db import database_sync_to_async
 from . import models
-
+from channels.auth import login
 class ChatConsumerEditor(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -31,6 +31,10 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         # print(message)
+
+        await login(self.scope, user)
+
+        await database_sync_to_async(self.scope["session"].save())
 
         # Send message to room group
         await self.channel_layer.group_send(

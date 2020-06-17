@@ -16,10 +16,6 @@ class Message(models.Model):
 
     class Meta:
         """Meta definition for Message."""
-        unique_together = [("author", "message")]
+        unique_together = [['author', 'message']]
         verbose_name = 'Message'
         verbose_name_plural = 'Messages'
-
-    def __str__(self):
-        """Unicode representation of Message."""
-        return self.author.username
