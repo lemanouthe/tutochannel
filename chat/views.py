@@ -42,8 +42,6 @@ def connexionapi(request):
         
         username = postdata['username']
         password = postdata['password']
-        print(username)
-        print(password)
 
         try:
             user = authenticate(username=username, password=password)
