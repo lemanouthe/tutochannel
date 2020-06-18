@@ -32,9 +32,10 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
         message = text_data_json['message']
         # print(message)
 
-        await login(self.scope, user)
+        # Login
+        # await login(self.scope, user)
 
-        await database_sync_to_async(self.scope["session"].save())
+        # await database_sync_to_async(self.scope["session"].save())
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -59,9 +60,11 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     def save_message(self, message):
         texte = message['mes']
         auteur = User.objects.get(username=str(message['user']))
+        salon = models.salon.objects.filter(slug=message['slug'])[:1].get()
 
         mess = models.Message(
             message=texte,
-            author=auteur
+            author=auteur,
+            salon=salon
         )
         mess.save()

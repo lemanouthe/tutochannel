@@ -141,6 +141,7 @@
                     <div class="avatar"><img class="img-circle" style="width:100%;" src="https://lh6.googleusercontent.com/-lr2nyjhhjXw/AAAAAAAAAAI/AAAAAAAARmE/MdtfUmC0M4s/photo.jpg" /></div>
                         <div class="text text-l">
                             <p>${ item.mes }</p>
+                            <p><small>${ item.user }</small></p>
                         </div>
                     </div>
                 </li>
@@ -148,6 +149,7 @@
                         <div class="msj-rta macro">
                             <div class="text text-r">
                                 <p>${ item.mes }</p>
+                                <p><small>${ item.user }</small></p>
                             </div>
                         <div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="https://a11.t26.net/taringa/avatares/9/1/2/F/7/8/Demon_King1/48x48_5C5.jpg" /></div>                               
                     </li>
@@ -263,6 +265,7 @@
                     reponse: [
                         
                     ],
+                    slug: "{{ slug }}",
                     other: [],
                     username: "{{ request.user.username }}",
                 },
@@ -282,7 +285,7 @@
                         //return strTime;
                     //},
                     connect() {
-                        roomName = "salut"
+                        roomName = this.slug
                         this.socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/' + roomName + '/');
                         this.socket.onopen = () => {
                             this.status = "connected";
@@ -315,7 +318,8 @@
                         data = {
                             "message":{
                                 "mes": this.message,
-                                "user": this.username
+                                "user": this.username,
+                                "slug": this.slug
                             }
                         }
                         this.socket.send(JSON.stringify(data));

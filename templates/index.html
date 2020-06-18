@@ -3,78 +3,27 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
         <title>TUTO WEB SOCKET</title>
     </head>
 
     <body>
-        <h1>Hello world!!!!</h1>
-
-        <div id="app">
-            <ul>
-                <li v-for="item in reponse">
-                    ${ item.user } : ${ item.mes }
-                </li>
-            </ul>
-            <input type="text" v-model="message">
-            <input type="text" v-model="username">
-            <button type="submit" @click="sendmessage">Envoyer</button>
+        <div class="container mt-5">
+            <div class="row">
+                {% for s in salon %}
+                <div class="col-md-6">
+                    <div class="card-deck">
+                        <div class="card">
+                            <img src="{{ s.image.url }}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ s.nom }}</h5>
+                                <a href="{% url 'chat' s.slug %}"><button class="btn btn-primary">Entrez</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/reconnecting-websocket@4.1.10/dist/reconnecting-websocket-cjs.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue-websocket@0.2.3/dist/vue-websocket.min.js"></script>
-
-        <script>
-            const app = new Vue({
-                el: "#app",
-                data: {
-                    message: "",
-                    reponse: [],
-                    username: "Anonyme",
-                },
-                delimiters: ["${", "}"],
-                mounted: function() {
-                    this.connect()
-                },
-                methods: {
-                    connect() {
-                        roomName = "salut"
-                        this.socket = new WebSocket('ws://127.0.0.1:8000/ws/chat/' + roomName + '/');
-                        this.socket.onopen = () => {
-                            this.status = "connected";
-                            console.log("connecte")
-                            
-                            this.socket.onmessage = ({data}) => {
-                            //Recuperation message
-                                wsdata = JSON.parse(data)
-                                //console.log(wsdata.message.mes)
-                                //console.log(wsdata.message.user)
-                                this.reponse.push(wsdata.message)
-                                //console.log(this.reponse)
-                            };
-                        };
-                    },
-                    disconnect() {
-                        this.socket.close();
-                        console.log("deconnecte")
-                    },
-                    
-                    
-                    sendmessage: function(){
-                        data = {
-                            "message":{
-                                "mes": this.message,
-                                "user": this.username
-                            }
-                        }
-                        this.socket.send(JSON.stringify(data));
-                    },
-
-                    updateAdmin: function(){
-                        this.socket.send(JSON.stringify({ 'message':"code send succes", 'admin':this.admin, 'code':this.codedep }));
-                    },          
-                }
-            });
-        </script>
     </body>
 </html>

@@ -4,5 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.connexion, name="connexion"),
     path('connexionapi', views.connexionapi, name="connexionapi"),
-    path('chat', views.index, name="index"),
+    path('index', views.index, name="index"),
+    path('chat/<slug:slug>', views.chat, name="chat"),
+    
 ]

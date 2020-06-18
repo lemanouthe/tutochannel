@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 import json
 from django.contrib.auth.models import User
@@ -10,14 +10,29 @@ from . import models
 # Create your views here.
 @login_required(login_url='connexion')
 def index(request):
-    mess = models.Message.objects.filter(status=True).order_by('date_add')
+    salon = models.salon.objects.filter(status=True)
+    data = {
+        'salon': salon
+    }
+    return render(request, 'index.html', data)
+
+@login_required(login_url='connexion')
+def chat(request, slug):
+    mess = models.Message.objects.filter(status=True, salon__slug=slug).order_by('date_add')
     data = {
         'message': mess,
+        'slug': slug
     }
     return render(request, 'chat.html', data)
 
 def connexion(request):
-    return render(request, 'connexion.html')
+    try:
+        if request.user.is_authenticated:
+            return redirect('index')
+        else:
+            return render(request, 'connexion.html')
+    except:
+        return redirect('index')
 
 def connexionapi(request):
     statut = False
