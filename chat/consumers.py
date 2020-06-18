@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from channels.db import database_sync_to_async
 from . import models
 from channels.auth import login
+from datetime import datetime
 class ChatConsumerEditor(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -17,6 +18,17 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+        self.mess_histo =  await self.get_all_chat(self.room_name)
+        # self.mess_histo =  await database_sync_to_async(self.get_all_chat(self.room_name))
+        histo = self.mess_histo
+        print(histo)
+        # for m in histo:
+        #     data = {
+        #         'author': m.user.username,
+        #         'message': m.message,
+        #         'date_add': m.date_add.strtftime('%d%m%Y'),
+        #     }
+        #     await self.send(text_data=json.dumps(data))
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -30,7 +42,7 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        # print(message)
+        print(message, 'receive')
 
         # Login
         # await login(self.scope, user)
@@ -45,21 +57,23 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
                 'message': message,
             }
         )
+        
+        await self.save_message(message)
 
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
+        print(message, "chat_message")
         
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
-        }))
-        await self.save_message(message)
-    
+        }))    
     @database_sync_to_async
     def save_message(self, message):
         texte = message['mes']
-        auteur = User.objects.get(username=str(message['user']))
+        author = message['user']
+        auteur = User.objects.filter(username=author)[:1].get()
         salon = models.salon.objects.filter(slug=message['slug'])[:1].get()
 
         mess = models.Message(
@@ -68,3 +82,12 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
             salon=salon
         )
         mess.save()
+    
+    @database_sync_to_async
+    def get_all_chat(self, salon):
+        salon = models.salon.objects.filter(slug=salon)[:1].get()
+        print(salon)
+        try:
+            return models.Message.objects.filter(status=True, salon=salon).order_by('date_add')
+        except:
+            pass

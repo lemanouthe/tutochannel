@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from . import models
+from django.utils.safestring import mark_safe
+import json
 
 
 # Create your views here.
@@ -18,9 +20,14 @@ def index(request):
 
 @login_required(login_url='connexion')
 def chat(request, slug):
-    mess = models.Message.objects.filter(status=True, salon__slug=slug).order_by('date_add')
+    try:
+        mess = models.salon.objects.filter(status=True, slug=slug)[:1].get()
+    except:
+        pass
     data = {
-        'message': mess,
+        'room_name_json': mark_safe(json.dumps(slug)),
+        'username': mark_safe(json.dumps(request.user.username)),
+        'user': request.user.username,
         'slug': slug
     }
     return render(request, 'chat.html', data)

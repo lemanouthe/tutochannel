@@ -113,29 +113,6 @@
     <body>
         <div class="col-sm-3 col-sm-offset-4 frame" id="app">
             <ul>
-                {% for m in message %}
-                {% if  m.author.username == 'mamoute' %}
-                <li style="width:100%">
-                    <div class="msj macro">
-                    <div class="avatar"><img class="img-circle" style="width:100%;" src="https://lh6.googleusercontent.com/-lr2nyjhhjXw/AAAAAAAAAAI/AAAAAAAARmE/MdtfUmC0M4s/photo.jpg" /></div>
-                        <div class="text text-l">
-                            <p>{{ m.message }}</p>
-                            <p><small>{{ m.date_add|date:"d F Y H:i" }}</small></p>
-                        </div>
-                    </div>
-                </li>
-                {% else %}
-                    <li style="width:100%;">
-                        <div class="msj-rta macro">
-                            <div class="text text-r">
-                                <p>{{ m.message }}</p>
-                                <p><small>{{ m.date_add|date:"d F Y H:i" }}</small></p>
-                            </div>
-                        <div class="avatar" style="padding:0px 0px 0px 10px !important"><img class="img-circle" style="width:100%;" src="https://a11.t26.net/taringa/avatares/9/1/2/F/7/8/Demon_King1/48x48_5C5.jpg" /></div>                               
-                    </li>
-                {% endif %}
-                {% endfor %}
-
                 <li style="width:100%" v-for="item in reponse">
                     <div class="msj macro">
                     <div class="avatar"><img class="img-circle" style="width:100%;" src="https://lh6.googleusercontent.com/-lr2nyjhhjXw/AAAAAAAAAAI/AAAAAAAARmE/MdtfUmC0M4s/photo.jpg" /></div>

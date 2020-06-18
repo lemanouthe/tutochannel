@@ -27,7 +27,7 @@ class salon(models.Model):
 
 class Message(models.Model):
     """Model definition for Message."""
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='auteur', blank=True, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='auteur', null=True)
     salon = models.ForeignKey(salon, on_delete=models.CASCADE, related_name='salon_mesage', blank=True, null=True)
     message = models.TextField()
     
@@ -39,6 +39,6 @@ class Message(models.Model):
 
     class Meta:
         """Meta definition for Message."""
-        unique_together = [['author', 'message']]
+        unique_together = ['author', 'message']
         verbose_name = 'Message'
         verbose_name_plural = 'Messages'
