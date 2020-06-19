@@ -18,10 +18,9 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
         )
 
         await self.accept()
-        self.mess_histo =  await self.get_all_chat(self.room_name)
+        # await self.get_all_chat(self.room_name)
         # self.mess_histo =  await database_sync_to_async(self.get_all_chat(self.room_name))
-        histo = self.mess_histo
-        print(histo)
+        # print(mess_histo)
         # for m in histo:
         #     data = {
         #         'author': m.user.username,
@@ -43,6 +42,16 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         print(message, 'receive')
+        
+        # Send the message to the specified user
+        await self.get_all_chat(self.room_name)
+        # print(histo)
+        # for m in message:
+        #     data = {
+        #         "author": m['user'],
+        #         "message": m['message']
+        #     }
+        #     await self.send(text_data=json.dumps(data))
 
         # Login
         # await login(self.scope, user)

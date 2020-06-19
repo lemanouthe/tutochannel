@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from . import models
 from django.utils.safestring import mark_safe
 import json
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 # Create your views here.
@@ -20,16 +22,20 @@ def index(request):
 
 @login_required(login_url='connexion')
 def chat(request, slug):
-    try:
-        mess = models.salon.objects.filter(status=True, slug=slug)[:1].get()
-    except:
-        pass
+    layer = get_channel_layer()
+    first = User.objects.get(username=request.user.username)
+    if first:
+        mess = models.Message.objects.filter(status=True, salon__slug=slug, author__username=first)
+    else:
+        mess = models.Message.objects.filter(status=True, salon__slug=slug).exclude(author__username=request.user.username)
     data = {
-        'room_name_json': mark_safe(json.dumps(slug)),
-        'username': mark_safe(json.dumps(request.user.username)),
-        'user': request.user.username,
+        'message': mess,
         'slug': slug
     }
+    async_to_sync(layer.group_send)('chat_salut', {
+        'type': 'chat_message',
+        'message': data
+    })
     return render(request, 'chat.html', data)
 
 def connexion(request):

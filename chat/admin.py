@@ -44,6 +44,7 @@ class MessageAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        'salon',
         'status',
         'date_upd',
         'date_add',
