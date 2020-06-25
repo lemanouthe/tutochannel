@@ -16,7 +16,7 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-
+        actu = await self.get_all_chat(self.room_name)
         await self.accept()
         # await self.get_all_chat(self.room_name)
         # self.mess_histo =  await database_sync_to_async(self.get_all_chat(self.room_name))
@@ -41,22 +41,15 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        print(message, 'receive')
-        
-        # Send the message to the specified user
-        await self.get_all_chat(self.room_name)
-        # print(histo)
-        # for m in message:
-        #     data = {
-        #         "author": m['user'],
-        #         "message": m['message']
-        #     }
-        #     await self.send(text_data=json.dumps(data))
-
-        # Login
-        # await login(self.scope, user)
-
-        # await database_sync_to_async(self.scope["session"].save())
+        try:
+            messagein = message['mes']
+            userin = message['user']
+            
+            print(messagein)
+            print(userin)
+        except Exception as e:
+            print(str(e))
+            pass
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -72,7 +65,6 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
-        print(message, "chat_message")
         
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
@@ -96,7 +88,4 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     def get_all_chat(self, salon):
         salon = models.salon.objects.filter(slug=salon)[:1].get()
         print(salon)
-        try:
-            return models.Message.objects.filter(status=True, salon=salon).order_by('date_add')
-        except:
-            pass
+        return models.Message.objects.filter(status=True, salon=salon).order_by('date_add')
