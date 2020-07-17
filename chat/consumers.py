@@ -41,15 +41,6 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        try:
-            messagein = message['mes']
-            userin = message['user']
-            
-            print(messagein)
-            print(userin)
-        except Exception as e:
-            print(str(e))
-            pass
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -65,10 +56,19 @@ class ChatConsumerEditor(AsyncWebsocketConsumer):
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
+        mes = message['mes']
+        auteur = message['user']
+        print(message, "chat receive")
+        print(mes)
+        print(auteur)
+        # await self.get_all_chat(self.room_name)
+        # mess_histo = database_sync_to_async(self.get_all_chat(self.room_name))
+        # print(mess_histo)
         
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
-            'message': message,
+            'mess': mes,
+            'auteur': auteur,
         }))    
     @database_sync_to_async
     def save_message(self, message):
