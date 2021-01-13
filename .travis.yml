@@ -6,9 +6,11 @@ env:
     - SECRET_KEY='TEST'
 services:
     - postgresql
+    - redis
 install:
-    - pip install -r requirements.txt
+    - pipenv install
 
 script:
     # -  coverage run --source='blog' manage.py test && coverage report && coverage html
     - python manage.py test
+
